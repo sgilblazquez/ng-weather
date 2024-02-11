@@ -23,35 +23,25 @@ export class WeatherService {
 
   private writableCurrentForecasts = signal<ExpiredWeatherData<Forecast>[]>(
     [],
-    {
-      equal: isEqual,
-    }
+    { equal: isEqual }
   );
   private writableCurrentConditions = signal<
     ExpiredWeatherData<CurrentConditions>[]
-  >([], {
-    equal: isEqual,
-  });
-  private readonly saveConditionsToLocalStorageEffect = effect(() => {
-    console.log(
-      "updating currentConditions localStorage",
-      this.writableCurrentConditions()
-    );
+  >([], { equal: isEqual });
+  /** Effect to save conditions changes in localStorage */
+  private readonly saveConditionsToLocalStorageEffect = effect(() =>
     localStorage.setItem(
       CONDITIONS,
       JSON.stringify(this.writableCurrentConditions())
-    );
-  });
-  private readonly saveForecastsToLocalStorageEffect = effect(() => {
-    console.log(
-      "updating currentForecasts localStorage",
-      this.writableCurrentForecasts()
-    );
+    )
+  );
+  /** Effect to save forecasts changes in localStorage */
+  private readonly saveForecastsToLocalStorageEffect = effect(() =>
     localStorage.setItem(
       FORECAST,
       JSON.stringify(this.writableCurrentForecasts())
-    );
-  });
+    )
+  );
 
   constructor(
     private http: HttpClient,
@@ -67,15 +57,21 @@ export class WeatherService {
     }
   }
 
+  /**
+   * Get the current conditions and zipcode from location in parameter
+   * @param zipcode Location to get conditions from
+   * @returns Observable with conditions and zipcode information for location
+   */
   getCurrentConditions(zipcode: string): Observable<ConditionsAndZip> {
     return of({}).pipe(
       switchMap(() => {
+        // Verify and remove data expired
         this.removeExpiredWeatherData(this.writableCurrentConditions);
         const currentCondition = this.writableCurrentConditions().find(
           (currentCondition: ExpiredWeatherData<CurrentConditions>) =>
             currentCondition.zip === zipcode
         );
-        console.log("looking for currentCondition", currentCondition);
+        // If conditions are not present in storage, request to server
         if (!currentCondition) {
           return this.http
             .get<CurrentConditions>(
@@ -87,7 +83,6 @@ export class WeatherService {
                 data: newCurrentCondition,
               })),
               tap((newCurrentCondition: ConditionsAndZip) => {
-                console.log("request finished", newCurrentCondition);
                 this.writableCurrentConditions.update(
                   (
                     currentConditions: ExpiredWeatherData<CurrentConditions>[]
@@ -117,13 +112,20 @@ export class WeatherService {
     );
   }
 
+  /**
+   * Get the current forecasts from location in parameter
+   * @param zipcode Location to get forecast from
+   * @returns Observable with forecasts information for location
+   */
   getForecast(zipcode: string): Observable<Forecast> {
     return of({}).pipe(
       switchMap(() => {
+        // Verify and remove data expired
         this.removeExpiredWeatherData(this.writableCurrentForecasts);
         const forecast = this.writableCurrentForecasts().find(
           (forecast: ExpiredWeatherData<Forecast>) => forecast.zip === zipcode
         );
+        // If forecast is not present in storage, request to server
         if (!forecast) {
           // Here we make a request to get the forecast data from the API. Note the use of backticks and an expression to insert the zipcode
           return this.http
@@ -154,6 +156,10 @@ export class WeatherService {
     );
   }
 
+  /**
+   * Verify and update storage, removing expiration data
+   * @param weatherData Weather data signal from where to verify expiration data
+   */
   private removeExpiredWeatherData(
     weatherData: WritableSignal<
       ExpiredWeatherData<CurrentConditions | Forecast>[]
@@ -162,16 +168,19 @@ export class WeatherService {
     const now = new Date().getTime();
     weatherData.update(
       (allData: ExpiredWeatherData<CurrentConditions | Forecast>[]) =>
-        allData.filter((currentdata) => {
-          console.log("expiration check:", currentdata.expiration, now);
-          return (
+        allData.filter(
+          (currentdata) =>
             currentdata.expiration + environment.cacheTimeInSeconds * 1000 >=
             now
-          );
-        })
+        )
     );
   }
 
+  /**
+   * Retrieve an icon url
+   * @param id Icon id
+   * @returns Icon url
+   */
   getWeatherIcon(id: number): string {
     if (id >= 200 && id <= 232)
       return WeatherService.ICON_URL + "art_storm.png";

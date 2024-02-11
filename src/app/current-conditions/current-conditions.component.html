@@ -1,9 +1,11 @@
 <div>
+  <!-- Template to use as tabs title -->
   <ng-template #defaultHeader let-currentConditions
     >{{ currentConditions.data.name }} ({{
       currentConditions.zip
     }})</ng-template
   >
+  <!-- Template to use as tabs content -->
   <ng-template #defaultBody let-currentConditions>
     <div>
       <h4>Current conditions: {{ currentConditions.data.weather[0].main }}</h4>

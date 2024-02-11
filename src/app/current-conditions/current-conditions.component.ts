@@ -28,7 +28,8 @@ export class CurrentConditionsComponent {
         takeUntilDestroyed()
       )
       .subscribe((currentLocation: string) => {
-        console.log("currentLocations changes", currentLocation);
+        // On every location change, all tabs creation is launched
+        // Id information ensures no duplicated tabs
         this.tabs.createTab({
           id: currentLocation,
           data: this.weatherService.getCurrentConditions(currentLocation),
@@ -39,6 +40,7 @@ export class CurrentConditionsComponent {
   }
 
   onTabRemoved(tabId: string) {
+    // When a tab is removed, location is also removed
     this.locationService.removeLocation(tabId);
   }
 

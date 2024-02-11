@@ -1,5 +1,7 @@
+<!-- Subscription to selectedTabData to get current conditions of selected tab -->
 @if(tabs.size > 0 && tabs.get(selectedTabId).data | async; as selectedTabData) {
 <ul class="nav nav-pills" role="tablist">
+  <!-- Loop on tabs information and subscription to every tab data to show tabs headers -->
   @for(tab of tabs | keyvalue : itemsOrder; track tab.key) { @if(tab.value.data
   | async; as tabData){
   <li
@@ -9,6 +11,7 @@
   >
     <a>
       <span class="flex">
+        <!-- Showing selected tab header using template -->
         <ng-container
           *ngTemplateOutlet="
             tab.value.headerTemplate;
@@ -22,6 +25,7 @@
   } }
 </ul>
 <div class="well flex">
+  <!-- Showing selected tab content using template -->
   <ng-container
     *ngTemplateOutlet="
       tabs.get(selectedTabId).bodyTemplate;

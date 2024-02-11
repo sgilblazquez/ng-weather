@@ -1,5 +1,6 @@
 <div>
   <div class="panel panel-default">
+    <!-- Subscription to forecast information -->
     @if(forecast$ | async; as forecast) {
     <div class="panel-heading">
       <h3 class="panel-title">5-day forecast for {{ forecast.city.name }}</h3>
