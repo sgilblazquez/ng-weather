@@ -1,0 +1,32 @@
+@if(tabs.size > 0 && tabs.get(selectedTabId).data | async; as selectedTabData) {
+<ul class="nav nav-pills" role="tablist">
+  @for(tab of tabs | keyvalue : itemsOrder; track tab.key) { @if(tab.value.data
+  | async; as tabData){
+  <li
+    role="presentation"
+    [class.active]="selectedTabId === tab.key"
+    (click)="onTabSelected(tab.key)"
+  >
+    <a>
+      <span class="flex">
+        <ng-container
+          *ngTemplateOutlet="
+            tab.value.headerTemplate;
+            context: { $implicit: tabData }
+          "
+        ></ng-container>
+        <span class="close" (click)="onTabClose(tab.key)">&times;</span></span
+      >
+    </a>
+  </li>
+  } }
+</ul>
+<div class="well flex">
+  <ng-container
+    *ngTemplateOutlet="
+      tabs.get(selectedTabId).bodyTemplate;
+      context: { $implicit: selectedTabData }
+    "
+  ></ng-container>
+</div>
+}
