@@ -1,0 +1,24 @@
+{
+  "workbench.iconTheme": "vscode-icons",
+  "vsicons.dontShowNewVersionMessage": true,
+  "vsicons.projectDetection.autoReload": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "formattingToggle.affects": ["editor.formatOnPaste", "editor.formatOnSave"],
+  "stylelint.validate": ["css", "less", "postcss", "scss"],
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript][typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[json][jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css][scss][less]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}

@@ -1,0 +1,17 @@
+.close {
+  cursor: pointer;
+  margin-left: 15px;
+}
+
+li > a > span {
+  cursor: pointer;
+}
+
+li.active .close {
+  color: white;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-between;
+}
