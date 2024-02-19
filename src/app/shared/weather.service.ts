@@ -1,5 +1,5 @@
 import { Injectable, WritableSignal, effect, signal } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { EMPTY, Observable, of } from "rxjs";
 import { catchError, map, switchMap, tap } from "rxjs/operators";
 
 import { HttpClient } from "@angular/common/http";
@@ -100,7 +100,7 @@ export class WeatherService {
                   `No weather conditions available for zipcode ${zipcode}`
                 );
                 this.locationService.removeLocation(zipcode);
-                return of(null);
+                return EMPTY;
               })
             );
         }
@@ -147,7 +147,7 @@ export class WeatherService {
               ),
               catchError(() => {
                 console.error(`No forecast available for zipcode ${zipcode}`);
-                return of(null);
+                return EMPTY;
               })
             );
         }

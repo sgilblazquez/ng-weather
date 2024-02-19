@@ -5,7 +5,8 @@ import { Router } from "@angular/router";
 import { TabsComponent } from "app/shared/components/tabs/tabs.component";
 import { takeUntilDestroyed, toObservable } from "@angular/core/rxjs-interop";
 import { from } from "rxjs";
-import { switchMap } from "rxjs/operators";
+import { concatMap, switchMap } from "rxjs/operators";
+import { ConditionsAndZip } from "app/shared/conditions-and-zip.type";
 
 @Component({
   selector: "app-current-conditions",
@@ -25,14 +26,19 @@ export class CurrentConditionsComponent {
     toObservable(this.locationService.locations)
       .pipe(
         switchMap((currentLocations: string[]) => from(currentLocations)),
+        concatMap((currentLocation: string) =>
+          this.weatherService.getCurrentConditions(currentLocation)
+        ),
         takeUntilDestroyed()
       )
-      .subscribe((currentLocation: string) => {
+      .subscribe((currentConditions: ConditionsAndZip) => {
         // On every location change, all tabs creation is launched
-        // Id information ensures no duplicated tabs
         this.tabs.createTab({
-          id: currentLocation,
-          data: this.weatherService.getCurrentConditions(currentLocation),
+          // Id information ensures no duplicated tabs
+          id: currentConditions.zip,
+          // Observable is sent to make weather conditions update
+          // on tab activation if needed
+          data: this.weatherService.getCurrentConditions(currentConditions.zip),
           headerTemplate: this.defaultHeaderTemplate,
           bodyTemplate: this.defaultBodyTemplate,
         });
